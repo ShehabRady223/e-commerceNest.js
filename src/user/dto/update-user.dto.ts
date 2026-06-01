@@ -1,39 +1,46 @@
-import { IsBoolean, IsEmail, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateUserDto {
-    @IsOptional()
-    @IsString()
-    name?: string;
-    
-    @IsOptional()
-    @IsEmail(undefined, { message: 'please enter a valid email' })
-    email?: string;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @IsOptional()
-    @IsString()
-    password?: string;
+  @IsOptional()
+  @IsEmail(undefined, { message: 'please enter a valid email' })
+  email?: string;
 
-    @IsOptional()
-    @IsEnum(['user','admin'],{message:'Invalid role'})
-    role?: string;
+  @IsOptional()
+  @IsString()
+  password?: string;
 
-    @IsOptional()
-    @IsNumber()
-    age?: number;
+  @IsOptional()
+  @IsEnum(['user', 'admin'], { message: 'Invalid role' })
+  role?: string;
 
-    @IsOptional()
-    @IsString()
-    phoneNumber?: string;
+  @IsOptional()
+  @IsNumber()
+  age?: number;
 
-    @IsOptional()
-    @IsString()
-    address?: string;
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
 
-    @IsOptional()
-    @IsBoolean()
-    isActive?: boolean;
+  @IsOptional()
+  @IsString()
+  address?: string;
 
-    @IsOptional()
-    @IsEnum(['male', 'female'])
-    gender?: string;
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsEnum(['male', 'female'])
+  gender?: string;
 }
