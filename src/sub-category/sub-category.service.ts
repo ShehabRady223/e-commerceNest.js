@@ -52,8 +52,8 @@ export class SubCategoryService {
     const isValid = mongoose.Types.ObjectId.isValid(_id);
     if (!isValid)
       throw new BadRequestException('Invalid SubCategory ID')
-    const newSubCategory = await this.subCategoryModel.findByIdAndDelete(_id);
-    if (!newSubCategory)
+    const subCategory = await this.subCategoryModel.findByIdAndDelete(_id);
+    if (!subCategory)
       throw new BadRequestException("SubCategory not found")
   }
 }

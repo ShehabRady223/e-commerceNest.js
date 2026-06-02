@@ -63,7 +63,7 @@ export class SubCategoryController {
   @Put(':id')
   @UsePipes(new ValidationPipe())
   async update(@Param('id') id: string, @Body() updateSubCategoryDto: UpdateSubCategoryDto) {
-    const data = await this.subCategoryService.update(id, updateCategoryDto);
+    const data = await this.subCategoryService.update(id, updateSubCategoryDto);
     return {
       statusCode: HttpStatus.OK,
       message: 'Category updated successfully',

@@ -47,8 +47,8 @@ export class CategoryService {
     const isValid = mongoose.Types.ObjectId.isValid(_id);
     if (!isValid)
       throw new BadRequestException('Invalid category ID')
-    const newCategory = await this.categoryModel.findByIdAndDelete(_id);
-    if (!newCategory)
+    const category = await this.categoryModel.findByIdAndDelete(_id);
+    if (!category)
       throw new BadRequestException("Category not found")
   }
 }
