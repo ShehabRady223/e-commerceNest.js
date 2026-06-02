@@ -20,9 +20,10 @@ import { Roles } from '../auth/decorators/role.decorator';
 import { RolesGuard } from '../auth/guards/role-auth.guard';
 
 @Controller('user')
+//* user can edit his profile like delete or update (resetpassword) his account
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  
   /**
    * Creates a user record. Restricted to admin role.
    * Accepts validated user fields in the request body.
@@ -43,7 +44,7 @@ export class UserController {
   /**
    * Lists users with optional pagination and filtering. Admin only.
    * Query parameters control page size, sort, and search criteria.
-   */
+  */
   @Get()
   @Roles(['admin'])
   @UseGuards(RolesGuard)
@@ -60,7 +61,7 @@ export class UserController {
   /**
    * Retrieves a single user by MongoDB document ID. Admin only.
    * Returns 404 when no user exists for the given identifier.
-   */
+  */
   @Get(':id')
   @Roles(['admin'])
   @UseGuards(RolesGuard)
@@ -94,6 +95,7 @@ export class UserController {
    * Permanently removes a user by ID. Admin only.
    * Responds with success when the record is deleted from the store.
    */
+  //* and soft delete user account by set isActive to false instad of delete it hard
   @Delete(':id')
   @Roles(['admin'])
   @UseGuards(RolesGuard)

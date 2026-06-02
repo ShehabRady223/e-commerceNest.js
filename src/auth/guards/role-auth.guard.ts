@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,7 +17,7 @@ export class RolesGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -31,12 +32,15 @@ export class RolesGuard implements CanActivate {
     try {
       const payload: JwtPayload = await this.jwtService.verifyAsync(token);
       if (!roles.includes(payload.role)) {
-        throw new ForbiddenException(
-          'You do not have permission to access this resource',
-        );
+        throw new ForbiddenException('You do not have permission to access this resource');
       }
       request['user'] = payload;
     } catch (err) {
+      // If the error is an instance of HttpException, rethrow it to preserve the original status code and message
+      // to avoid overriding on my thowing error
+      if (err instanceof HttpException) {
+        throw err;
+      }
       throw new UnauthorizedException();
     }
     return true;
