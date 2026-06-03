@@ -4,15 +4,13 @@ import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { Roles } from '../auth/decorators/role.decorator';
 import { RolesGuard } from '../auth/guards/role-auth.guard';
-import { Transform } from 'class-transformer';
 
+@UseGuards(RolesGuard)
 @Controller('coupon')
-
 export class CouponController {
   constructor(private readonly couponService: CouponService) { }
 
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  @Roles(["admin"])
   @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createCouponDto: CreateCouponDto) {
@@ -24,6 +22,7 @@ export class CouponController {
     }
   }
 
+  @Roles(["admin"])
   @Get()
   async findAll(@Query('search') search: string) {
     const coupons = await this.couponService.findAll(search);
@@ -34,6 +33,7 @@ export class CouponController {
     }
   }
 
+  @Roles(["admin"])
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const data = await this.couponService.findOne(id);
@@ -44,7 +44,7 @@ export class CouponController {
     }
   }
 
-
+  @Roles(["admin"])
   @Put(':id')
   @UsePipes(new ValidationPipe())
   async update(@Param('id') id: string, @Body() updateCouponDto: UpdateCouponDto) {
@@ -56,8 +56,7 @@ export class CouponController {
     }
   }
 
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  @Roles(["admin"])
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.couponService.remove(id);
