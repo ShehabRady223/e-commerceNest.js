@@ -45,7 +45,6 @@ export class BrandController {
   @Roles(['admin'])
   @UseGuards(RolesGuard)
   @Put(':id')
-  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true,skipMissingProperties:true }))
   @UsePipes(new ValidationPipe())
   async update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
     const data = await this.brandService.update(id, updateBrandDto);
