@@ -8,4 +8,4 @@ export class Brand {
     image?: string;
 }
 
-export const BrandScheam = SchemaFactory.createForClass(Brand);
+export const BrandSchema = SchemaFactory.createForClass(Brand);
