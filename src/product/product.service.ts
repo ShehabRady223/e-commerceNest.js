@@ -27,7 +27,7 @@ export class ProductService {
     //* brand
     if (createProductDto.brand) {
       console.log(createProductDto.brand);
-      
+
       const brand = await this.brandModel.findById(createProductDto.brand)
       if (!brand)
         throw new NotFoundException("Brand Not found");
@@ -107,9 +107,9 @@ export class ProductService {
     if (!isValid)
       throw new BadRequestException("Invalid Product ID")
     const deletedProduct = await this.productModel.findByIdAndDelete(_id);
-    console.log(deletedProduct);
     if (!deletedProduct)
       throw new NotFoundException("Product Not found");
+    return deletedProduct;
   }
 }
 
