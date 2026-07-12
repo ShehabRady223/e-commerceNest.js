@@ -4,16 +4,32 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Review } from './entities/review.entity';
 import mongoose, { Model } from 'mongoose';
-
-@Injectable()
+import { Product } from '../product/entities/product.entity';@Injectable()
 export class ReviewService {
-  constructor(@InjectModel(Review.name) private readonly reviewModel: Model<Review>) { }
+  constructor(@InjectModel(Review.name) private readonly reviewModel: Model<Review>,
+    @InjectModel(Product.name) private readonly productModel: Model<Product>) { }
 
   async create(createReviewDto: CreateReviewDto, userId: string) {
+    const product = await this.productModel.findById(createReviewDto.product);
+    if (!product)
+      throw new NotFoundException("Product Not Founded");
     const reviewExists = await this.reviewModel.findOne({ product: createReviewDto.product, user: userId });
     if (reviewExists)
       throw new NotFoundException('Review already exists for this product by this user');
     const review = new this.reviewModel({ ...createReviewDto, user: userId });
+    await review.save();
+
+    // Edit product rating
+    const productReviews = await this.reviewModel.find({ product: review.product });
+    if (productReviews.length > 0) {
+      const totalRating = productReviews.reduce((sum, current) => sum + current.rating, 0);
+      product.ratingsAverage = totalRating / productReviews.length;
+    } else {
+      product.ratingsAverage = 0;
+    }
+    product.ratingsQuantity = productReviews.length
+    await product.save();
+
     await review.populate({
       path: 'product',
       select: 'title description category', //// Must include 'category' so Mongoose knows what to populate next
@@ -22,7 +38,7 @@ export class ReviewService {
         select: 'name',
       },
     });
-    return await review.save();
+    return review
   }
 
   async findAll(productId: string) {
@@ -51,7 +67,7 @@ export class ReviewService {
     return reviews;
   }
 
-//TODO Test update and delete review ,Or pray to it works fine (I choose choice number 2)
+  //TODO Test update and delete review ,Or pray to it works fine (I choose choice number 2)
 
   async update(reviewId: string, userId: string, updateReview: UpdateReviewDto) {
     const isValid = mongoose.Types.ObjectId.isValid(reviewId);
@@ -60,13 +76,29 @@ export class ReviewService {
     const review = await this.reviewModel.findById(reviewId);
     if (!review)
       throw new NotFoundException('Review not found');
+    const product = await this.productModel.findById(review.product);
+    if (!product)
+      throw new NotFoundException("Product Not Founded");
     if (review.user.toString() !== userId)
       throw new ForbiddenException('You do not have permission to edit this review');
     // if (updateRating.rating !== undefined)
     // review.rating = updateReview.rating ?? review.rating;
     // review.reviewText = updateReview.reviewText ?? review.reviewText;
     Object.assign(review, updateReview);
-    return await review.save();
+    await review.save();
+
+    // Edit product rating
+    const productReviews = await this.reviewModel.find({ product: review.product });
+    if (productReviews.length > 0) {
+      const totalRating = productReviews.reduce((sum, current) => sum + current.rating, 0);
+      product.ratingsAverage = totalRating / productReviews.length;
+    } else {
+      product.ratingsAverage = 0;
+    }
+    product.ratingsQuantity = productReviews.length
+    await product.save();
+
+    return review;
   }
 
   async remove(reviewId: string, userId: string, isAdmin: boolean = false) {
@@ -77,11 +109,26 @@ export class ReviewService {
     if (!review)
       throw new NotFoundException('Review not found');
 
+    const product = await this.productModel.findById(review.product);
+    if (!product)
+      throw new NotFoundException("Product Not Founded");
+
     const isOnwer = review.user.toString() !== userId
     if (!isOnwer && !isAdmin)
       throw new ForbiddenException('You do not have permission to delete this review');
 
     await review.deleteOne();
+
+    const productReviews = await this.reviewModel.find({ product: review.product });
+    if (productReviews.length > 0) {
+      const totalRating = productReviews.reduce((sum, current) => sum + current.rating, 0);
+      product.ratingsAverage = totalRating / productReviews.length;
+    } else {
+      product.ratingsAverage = 0;
+    }
+    product.ratingsQuantity = productReviews.length
+    await product.save();
+
     return review;
   }
 }
