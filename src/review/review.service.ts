@@ -4,7 +4,8 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Review } from './entities/review.entity';
 import mongoose, { Model } from 'mongoose';
-import { Product } from '../product/entities/product.entity';@Injectable()
+import { Product } from '../product/entities/product.entity';
+@Injectable()
 export class ReviewService {
   constructor(@InjectModel(Review.name) private readonly reviewModel: Model<Review>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>) { }
@@ -41,7 +42,7 @@ export class ReviewService {
     return review
   }
 
-  async findAll(productId: string) {
+  async findAllReviewByProduct(productId: string) {
     const reviews = await this.reviewModel.find({ product: productId }).populate('product user', 'name email title').select('-__v').exec();
     if (!reviews || reviews.length === 0)
       throw new NotFoundException('No reviews found for this product');
@@ -57,7 +58,7 @@ export class ReviewService {
     return reviews;
   }
 
-  async findOne(userId: string) {
+  async findAllReviewByUser(userId: string) {
     const isValid = mongoose.Types.ObjectId.isValid(userId);
     if (!isValid)
       throw new BadRequestException("Invalid Review ID")

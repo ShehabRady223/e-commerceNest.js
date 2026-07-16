@@ -23,23 +23,23 @@ export class ReviewController {
   }
 
   @Get(':id')
-  async findAll(@Param('id') productId: string) {
+  async findAllReviewByProduct(@Param('id') productId: string) {
     return {
       statusCode: HttpStatus.OK,
       message: 'reviews fetched successfully',
-      data: await this.reviewService.findAll(productId)
+      data: await this.reviewService.findAllReviewByProduct(productId)
     }
   }
 
   @Roles(['admin'])
   @UseGuards(RolesGuard)
   @Get('user/:id')
-  async findOne(@Param('id') userId: string) {
+  async findAllReviewByUser(@Param('id') userId: string) {
     // const reviews = await this.reviewService.findOne(userId);
     return {
       statusCode: HttpStatus.OK,
       message: 'reviews fetched successfully',
-      data: await this.reviewService.findOne(userId)
+      data: await this.reviewService.findAllReviewByUser(userId)
     }
   }
 
@@ -54,8 +54,7 @@ export class ReviewController {
     };
   }
 
-  @Roles(['admin', 'user'])
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') reviewId: string, @Req() req) {
     return {

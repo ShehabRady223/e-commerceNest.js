@@ -12,7 +12,7 @@ export class CouponController {
 
   @Roles(["admin"])
   @Post()
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ transform: true }))
   async create(@Body() createCouponDto: CreateCouponDto) {
     const coupon = await this.couponService.create(createCouponDto);
     return {

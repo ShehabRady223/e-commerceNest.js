@@ -1,4 +1,5 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString, MaxLength, Min, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDateString, IsNotEmpty, IsNumber, IsString, MaxLength, Min, MinDate, MinLength } from "class-validator";
 
 export class CreateCouponDto {
     @IsNotEmpty({ message: 'Name is required' })
@@ -10,6 +11,8 @@ export class CreateCouponDto {
     //why cant pass Date.now() ?
     // cause Date.now() is number 
     // @IsDate()
+    // @MinDate(new Date(), { message: 'Date must be in the future' })
+    // @Type(() => Date)
     @IsDateString({}, { message: 'expirdate must be a date' })
     expirdate!: Date;
     @IsNumber({}, { message: 'Discount must be a number' })
