@@ -22,7 +22,7 @@ export class Cart {
         required: true,
     })
     cartItems!: Array<{
-        productId: Types.ObjectId | string;
+        productId: Types.ObjectId | Product;
         quantity: number;
         color?: string;
         price: number;

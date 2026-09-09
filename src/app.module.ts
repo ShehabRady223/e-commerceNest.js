@@ -10,6 +10,7 @@ import { CouponModule } from './coupon/coupon.module';
 import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
 import { CartModule } from './cart/cart.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CartModule } from './cart/cart.module';
     ProductModule,
     ReviewModule,
     CartModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

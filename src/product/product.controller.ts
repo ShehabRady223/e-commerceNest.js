@@ -77,6 +77,7 @@ export class ProductController {
    * HTTP DELETE `/product/:id` (restricted to users with the `admin` role).
    */
   @Roles(['admin'])
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.productService.remove(id);
