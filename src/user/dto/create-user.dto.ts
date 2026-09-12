@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEmail,
@@ -26,11 +27,13 @@ export class CreateUserDto {
   @MinLength(4, { message: 'the password must be at least 4 characters' })
   password!: string;
 
+  //! Can a users upgrade their permissions by themselves ???
   @IsEnum(['user', 'admin'], { message: 'Invalid role' })
   @IsNotEmpty({ message: 'the role is required' })
   role!: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   age?: number;
 
@@ -49,4 +52,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(['male', 'female'])
   gender?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 }

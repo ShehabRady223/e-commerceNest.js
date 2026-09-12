@@ -43,4 +43,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(['male', 'female'])
   gender?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 }

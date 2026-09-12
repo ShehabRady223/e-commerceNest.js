@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, MinLength } from "class-validator";
 
 
@@ -12,14 +13,16 @@ export class CreateProductDto {
     description!: string;
     @IsNotEmpty({ message: "quantity can't be null" })
     @IsNumber({}, { message: "quantity must be a number" })
+    @Type(() => Number)
     @Min(1, { message: "quantity must be at least 1 item" })
     quantity!: number;
     @IsNotEmpty({ message: "price can't be null" })
+    @Type(() => Number)
     @IsNumber({}, { message: "price must be a number" })
     @Min(1, { message: "price can't be less than 0 pound" })
     price!: number
-    @IsNotEmpty({ message: "image cover can't be null" })
-    @IsUrl({}, { message: "image cover must be a valid url" })
+    // @IsNotEmpty({ message: "image cover can't be null" })
+    // @IsUrl({}, { message: "image cover must be a valid url" })
     imageCover!: string;
     @IsNotEmpty({ message: "category can't be null" })
     @IsMongoId({ message: "category ID must be a vaild" })
@@ -27,9 +30,10 @@ export class CreateProductDto {
 
     @IsOptional()
     @IsArray()
-    @IsUrl({}, { each: true })
+    // @IsUrl({}, { each: true })
     images?: string[];
     @IsOptional()
+    @Type(() => Number)
     @IsNumber()
     sold?: number;
     @IsOptional()

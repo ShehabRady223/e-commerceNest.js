@@ -9,15 +9,20 @@ import { Brand } from '../brand/entities/brand.entity';
 import { Category } from '../category/entities/category.entity';
 import { QueryParams } from './dto/QueryParams';
 import { ApiFeatures } from './dto/ApiFeatures';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
   constructor(@InjectModel(Product.name) private readonly productModel: Model<Product>
     , @InjectModel(Category.name) private readonly categoryModel: Model<Category>
     , @InjectModel(SubCategory.name) private readonly subCategoryModel: Model<SubCategory>,
-    @InjectModel(Brand.name) private readonly brandModel: Model<Product>) { }
+    @InjectModel(Brand.name) private readonly brandModel: Model<Product>,
+    private readonly cloudinaryService: CloudinaryService) { }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, files: {
+    imageCover?: Express.Multer.File[];
+    images?: Express.Multer.File[];
+  }) {
     const existingProduct = await this.productModel.findOne({ title: createProductDto.title });
     if (existingProduct)
       throw new BadRequestException("Product already exist.");
@@ -38,12 +43,19 @@ export class ProductService {
       if (!subCategory)
         throw new NotFoundException("SubCategory Not found");
     }
+    if (!files.imageCover)
+      throw new BadRequestException('imageCover is required.');
+    const [coverUpload] = await this.cloudinaryService.uploadImages(files.imageCover);
+    const imageUploads = files.images?.length
+      ? await this.cloudinaryService.uploadImages(files.images) : [];
+    createProductDto.imageCover = coverUpload.secure_url;
+    createProductDto.images = imageUploads.map((upload) => upload.secure_url);
     const product = new this.productModel(createProductDto);
     return await product.save();
   }
 
   async findAll(queryParams: QueryParams) {
-    //TODO Filtration on Products
+    /////TODO Filtration on Products
     // Searchable text fields
     const searchFields = ['title', 'description', 'color'];
     // Count total (before pagination, after filters + search)
@@ -92,10 +104,23 @@ export class ProductService {
     return product;
   }
 
-  async update(_id: string, updateProductDto: UpdateProductDto) {
+  async update(_id: string, updateProductDto: UpdateProductDto,
+    files?: {
+      imageCover?: Express.Multer.File[],
+      images?: Express.Multer.File[]
+    }) {
     const isValid = mongoose.Types.ObjectId.isValid(_id);
     if (!isValid)
       throw new BadRequestException("Invalid Product ID")
+    if (!files?.imageCover)
+      throw new BadRequestException('imageCover is required.');
+    const [coverUpload] = await this.cloudinaryService.uploadImages(files.imageCover);
+    const imageUploads = files.images?.length
+      ? await this.cloudinaryService.uploadImages(files.images) : [];
+    updateProductDto.imageCover = coverUpload.secure_url;
+    if (imageUploads.length) {
+      updateProductDto.images = imageUploads.map((upload) => upload.secure_url);
+    }
     const newProduct = await this.productModel.findByIdAndUpdate(_id, updateProductDto, { new: true });
     if (!newProduct)
       throw new NotFoundException("Product Not found");

@@ -11,6 +11,10 @@ import {
   HttpStatus,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  MaxFileSizeValidator,
+  ParseFilePipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,22 +22,36 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryParams } from './dto/query-params';
 import { Roles } from '../auth/decorators/role.decorator';
 import { RolesGuard } from '../auth/guards/role-auth.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { imageFileFilter } from './dto/fileFilter';
 
 @Controller('user')
 //* user can edit his profile like delete or update (resetpassword) his account
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-  
+  constructor(private readonly userService: UserService) { }
+
   /**
    * Creates a user record. Restricted to admin role.
    * Accepts validated user fields in the request body.
    */
   @Post()
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  // @Roles(['admin'])
+  // @UseGuards(RolesGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', { limits: { fileSize: 2 * 1024 * 1024 }, fileFilter: imageFileFilter })) // Limit to 2MB
   @UsePipes(new ValidationPipe())
-  async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto, @UploadedFile(new ParseFilePipe({
+    //fileIsRequired:fasle is impotant to be the file Optional
+    //  because the ParsFilePipe() is rejecting the request before your controller method executes (is required by default) 
+    fileIsRequired: false,
+    // validators: [
+    // new MaxFileSizeValidator({ maxSize: 500000 }), 0.5 M
+    // new FileTypeValidator({ fileType: /^image\/(png|jpeg)$/ }),
+    // ]
+  })) file?: Express.Multer.File) {
+    // console.log(file);
+    const user = await this.userService.create(createUserDto, file);
     return {
       statusCode: HttpStatus.CREATED,
       massage: 'user created successfully',
@@ -63,8 +81,8 @@ export class UserController {
    * Returns 404 when no user exists for the given identifier.
   */
   @Get(':id')
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  // @Roles(['admin'])
+  // @UseGuards(RolesGuard)
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findOne(id);
     return {
@@ -79,11 +97,17 @@ export class UserController {
    * Request body is validated before changes are applied to the database.
    */
   @Put(':id')
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  // @Roles(['admin'])
+  @UseInterceptors(
+    FileInterceptor('avatar', { limits: { fileSize: 2 * 1024 * 1024 }, fileFilter: imageFileFilter })) // Limit to 2MB
+  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const user = await this.userService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile(new ParseFilePipe({
+      validators: [
+        new MaxFileSizeValidator({ maxSize: 500000 })] //0.5 M
+    })) file?: Express.Multer.File) {
+    const user = await this.userService.update(id, updateUserDto, file);
     return {
       statusCode: HttpStatus.OK,
       message: 'user updated successfully',
@@ -97,8 +121,8 @@ export class UserController {
    */
   //* and soft delete user account by set isActive to false instad of delete it hard
   @Delete(':id')
-  @Roles(['admin'])
-  @UseGuards(RolesGuard)
+  // @Roles(['admin'])
+  @UseGuards(AuthGuard)
   async remove(@Param('id') id: string) {
     await this.userService.remove(id);
     return {
