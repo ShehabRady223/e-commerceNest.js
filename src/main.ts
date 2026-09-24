@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.set('query parser', 'extended');
   app.setGlobalPrefix('api/v1');
+    app.use(cookieParser());
   //in production can specific domain
   app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
