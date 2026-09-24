@@ -10,7 +10,7 @@ import { JwtPayload } from '../dto/jwtPayload';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -22,13 +22,17 @@ export class AuthGuard implements CanActivate {
       // 💡 Here the JWT secret key that's used for verifying the payload
       // is the key that was passed in the JwtModule
       const payload: JwtPayload = await this.jwtService.verifyAsync(token);
+      // to sure this type of token is access not refresh
+      if (payload.type !== 'access') {
+        throw new UnauthorizedException('Invalid token type');
+      }
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload;
+      return true;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('');
     }
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

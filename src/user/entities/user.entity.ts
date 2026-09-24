@@ -35,6 +35,8 @@ export class User {
   verificationCode?: string;
   @Prop({ enum: ['male', 'female'] })
   gender?: string;
+  @Prop({ type: String, select: false })
+  hashedRefreshToken?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

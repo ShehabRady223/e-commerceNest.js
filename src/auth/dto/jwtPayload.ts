@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
-
-export type JwtPayload = {
-  id: mongoose.Types.ObjectId;
+export type TokenType = 'access' | 'refresh';
+export interface JwtPayload {
+  id: string;
   name: string;
   role: string;
-};
+  type: TokenType;
+}

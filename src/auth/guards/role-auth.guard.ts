@@ -31,10 +31,16 @@ export class RolesGuard implements CanActivate {
     }
     try {
       const payload: JwtPayload = await this.jwtService.verifyAsync(token);
+      // لازم نتأكد إن التوكن ده فعلاً access token مش refresh token
+      // اتسرق أو اتبعت بالغلط في الهيدر
+      if (payload.type !== 'access') {
+        throw new UnauthorizedException('Invalid token type');
+      }
       if (!roles.includes(payload.role)) {
         throw new ForbiddenException('You do not have permission to access this resource');
       }
       request['user'] = payload;
+      return true;
     } catch (err) {
       // If the error is an instance of HttpException, rethrow it to preserve the original status code and message
       // to avoid overriding on my thowing error
@@ -43,7 +49,6 @@ export class RolesGuard implements CanActivate {
       }
       throw new UnauthorizedException();
     }
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
