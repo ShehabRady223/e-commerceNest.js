@@ -234,7 +234,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 Explore and test all endpoints using the Postman collection:
 
-🔗 **[Postman Collection]**(https://documenter.getpostman.com/view/41862176/2sBYB2sngo)
+🔗 **[Postman Collection](https://documenter.getpostman.com/view/41862176/2sBYB2sngo)**
 
 ---
 
