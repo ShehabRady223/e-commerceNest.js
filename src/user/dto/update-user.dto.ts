@@ -20,9 +20,9 @@ export class UpdateUserDto {
   @IsString()
   password?: string;
 
-  @IsOptional()
-  @IsEnum(['user', 'admin'], { message: 'Invalid role' })
-  role?: string;
+  // @IsOptional()
+  // @IsEnum(['user', 'admin'], { message: 'Invalid role' })
+  // role?: string;
 
   @IsOptional()
   @IsNumber()

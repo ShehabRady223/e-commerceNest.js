@@ -25,7 +25,7 @@ export class AuthController {
    * Persists the user and returns profile data with a JWT access token.
    */
   @Post('signup')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }))
   async signup(@Body() signupDto: SignupDto, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.authService.signup(signupDto);
     this.setRefreshTokenCookie(res, refreshToken);

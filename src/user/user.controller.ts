@@ -36,11 +36,9 @@ export class UserController {
    * Accepts validated user fields in the request body.
    */
   @Post()
-  // @Roles(['admin'])
-  // @UseGuards(RolesGuard)
   @UseInterceptors(
     FileInterceptor('avatar', { limits: { fileSize: 2 * 1024 * 1024 }, fileFilter: imageFileFilter })) // Limit to 2MB
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }))
   async create(@Body() createUserDto: CreateUserDto, @UploadedFile(new ParseFilePipe({
     //fileIsRequired:fasle is impotant to be the file Optional
     //  because the ParsFilePipe() is rejecting the request before your controller method executes (is required by default) 
@@ -50,7 +48,6 @@ export class UserController {
     // new FileTypeValidator({ fileType: /^image\/(png|jpeg)$/ }),
     // ]
   })) file?: Express.Multer.File) {
-    // console.log(file);
     const user = await this.userService.create(createUserDto, file);
     return {
       statusCode: HttpStatus.CREATED,
@@ -81,8 +78,6 @@ export class UserController {
    * Returns 404 when no user exists for the given identifier.
   */
   @Get(':id')
-  // @Roles(['admin'])
-  // @UseGuards(RolesGuard)
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findOne(id);
     return {
@@ -97,11 +92,10 @@ export class UserController {
    * Request body is validated before changes are applied to the database.
    */
   @Put(':id')
-  // @Roles(['admin'])
   @UseInterceptors(
     FileInterceptor('avatar', { limits: { fileSize: 2 * 1024 * 1024 }, fileFilter: imageFileFilter })) // Limit to 2MB
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }))
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto,
     @UploadedFile(new ParseFilePipe({
       validators: [

@@ -12,6 +12,7 @@ import { ReviewModule } from './review/review.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -20,6 +21,17 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('MONGO_URL'),
       }),
+    }),
+    // Rate Limiting
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          //ttl, the time to live in milliseconds,
+          ttl: 60000,
+          //limit, the maximum number of requests within the ttl.
+          limit: 10,
+        },
+      ],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
