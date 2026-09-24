@@ -8,17 +8,17 @@ A production-ready, modular **E-Commerce backend** built with **NestJS** and **T
 
 ## 📖 Table of Contents
 
--  [[#🧭 Overview]]
-- [[#✨Features]]
-- [[#🧰 Tech Stack]]
--  [[#🏗️ Architecture]]
-- [[#📁 Project Structure]]
-- [[#🚀 Getting Started]]
-- [[#🔑 Environment Variables]]
-- [[#📡 API Reference]]
-- [[#🛡️ Security]]
-- [[#🗺️ Roadmap]]
-- [[#📬 Postman Collection]]
+- 🧭 Overview
+- ✨ Features
+- 🧰 Tech Stack
+- 🏗️ Architecture
+- 📁 Project Structure
+- 🚀 Getting Started]]
+- 🔑 Environment Variables
+- 📡 API Reference
+- 🛡️ Security
+- 🗺️ Roadmap
+- 📬 Postman Collection
 
 ---
 
@@ -234,13 +234,14 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 Explore and test all endpoints using the Postman collection:
 
-🔗 **[Postman Collection]([https://your-postman-link-here.postman.co/](https://documenter.getpostman.com/view/41862176/2sBYB2sngo))**
+🔗 **[Postman Collection]**
+[https://your-postman-link-here.postman.co/](https://documenter.getpostman.com/view/41862176/2sBYB2sngo](https://documenter.getpostman.com/view/41862176/2sBYB2sngo)
 
 ---
 
 ## 🙋 Author
 
-**Shehab Rady** Backend Developer | NestJS · TypeScript · MongoDB [GitHub](https://github.com/ShehabRady223) · [LinkedIn]([https://linkedin.com/](https://www.linkedin.com/in/shehab-rady-6008aa334?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app))
+**Shehab Rady** Backend Developer | NestJS · TypeScript · MongoDB [GitHub](https://github.com/ShehabRady223) · [LinkedIn](https://www.linkedin.com/in/shehab-rady-6008aa334?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
 
 ---
 
